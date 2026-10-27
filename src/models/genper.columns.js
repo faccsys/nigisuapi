@@ -1,0 +1,68 @@
+// Metadata de la tabla genper00 (Personas), obtenida directamente del catalogo
+// de SQL Anywhere (syscolumn/sysdomain) via la DSN 'sql tvnet'.
+// type: 'number' | 'string' | 'boolean' | 'date'
+// readOnly: columnas calculadas (nombre, nomape, direccion) o de auditoria
+//           (usralt/usrchg/fecalt/fecchg/hosalt/hoschg) que la base llena sola.
+// required: NOT NULL sin default en la base -> debe enviarse al crear.
+module.exports = [
+  { name: 'percodigo', type: 'number', pk: true, required: true, description: 'Codigo unico de la persona (clave primaria)' },
+  { name: 'titcodigo', type: 'number', description: 'Codigo de titulo/tratamiento (FK gentit)' },
+  { name: 'ciucodigo', type: 'number', description: 'Codigo de ciudad (FK genciu)' },
+  { name: 'orgcodigo', type: 'number', description: 'Codigo de organizacion (FK genorg)' },
+  { name: 'destpodoc', type: 'number', description: 'Codigo de tipo de documento (FK gendes)' },
+  { name: 'destpoper', type: 'number', description: 'Codigo de tipo de persona (FK gendes)' },
+  { name: 'desdndemail', type: 'number', description: 'Codigo de dominio de email (FK gendes)' },
+  { name: 'perapellido', type: 'string', length: 250, required: true, description: 'Apellido (o razon social si es persona juridica)' },
+  { name: 'pernombre', type: 'string', length: 250, description: 'Nombre' },
+  { name: 'pernumid', type: 'string', length: 20, required: true, description: 'Numero de identificacion (cedula/RNC)' },
+  { name: 'pertelef', type: 'string', length: 15, description: 'Telefono principal' },
+  { name: 'perdirec1', type: 'string', length: 100, description: 'Direccion linea 1' },
+  { name: 'perdirec2', type: 'string', length: 100, description: 'Direccion linea 2' },
+  { name: 'pernumcasa', type: 'string', length: 10, description: 'Numero de casa' },
+  { name: 'pertelef1', type: 'string', length: 15, description: 'Telefono secundario' },
+  { name: 'perfax', type: 'string', length: 15, description: 'Fax' },
+  { name: 'perpobox', type: 'string', length: 10, description: 'Casilla postal' },
+  { name: 'peremail', type: 'string', length: 1000, description: 'Correo electronico' },
+  { name: 'perrlegal', type: 'string', length: 35, description: 'Representante legal' },
+  { name: 'perdirec3', type: 'string', length: 100, description: 'Direccion linea 3' },
+  { name: 'percartbjo', type: 'string', length: 25, description: 'Numero de carta/beeper de bajo' },
+  { name: 'pertittarj', type: 'string', length: 40, description: 'Titular de tarjeta' },
+  { name: 'perescob', type: 'boolean', description: 'Es cobrador' },
+  { name: 'peresemp', type: 'boolean', description: 'Es empleado' },
+  { name: 'peresrea', type: 'boolean', description: 'Es relacionado' },
+  { name: 'peresage', type: 'boolean', description: 'Es agente' },
+  { name: 'peresven', type: 'boolean', description: 'Es vendedor' },
+  { name: 'perescli', type: 'boolean', description: 'Es cliente' },
+  { name: 'perespro', type: 'boolean', description: 'Es proveedor' },
+  { name: 'peresexport', type: 'boolean', description: 'Es exportador' },
+  { name: 'peresimport', type: 'boolean', description: 'Es importador' },
+  { name: 'perestransp', type: 'boolean', description: 'Es transportista' },
+  { name: 'peresmed', type: 'boolean', description: 'Es mediador' },
+  { name: 'peresimp', type: 'boolean', description: 'Es impresor' },
+  { name: 'peresocio', type: 'boolean', description: 'Es socio' },
+  { name: 'peralias', type: 'string', length: 20, description: 'Alias' },
+  { name: 'permovil', type: 'string', length: 15, description: 'Telefono movil' },
+  { name: 'perescon', type: 'boolean', description: 'Es contacto' },
+  { name: 'perempresa', type: 'string', length: 100, description: 'Nombre de la empresa donde trabaja' },
+  { name: 'perempresatel', type: 'string', length: 50, description: 'Telefono de la empresa' },
+  { name: 'peresalu', type: 'boolean', description: 'Es alumno' },
+  { name: 'perobservacion', type: 'string', length: 32767, description: 'Observaciones' },
+  { name: 'peresprd', type: 'boolean', description: 'Es proveedor de reaseguro/reserva (segun modulo)' },
+  { name: 'peresrem', type: 'boolean', description: 'Es remitente' },
+  { name: 'percoordenadas', type: 'string', length: 50, description: 'Coordenadas GPS' },
+  { name: 'perdirecdetalles', type: 'string', length: 500, description: 'Detalles adicionales de direccion' },
+  { name: 'perbarrio', type: 'string', length: 50, description: 'Barrio/sector' },
+
+  // Columnas calculadas por la base de datos (no se pueden escribir)
+  { name: 'nombre', type: 'string', readOnly: true, description: 'Nombre completo calculado' },
+  { name: 'nomape', type: 'string', readOnly: true, description: 'Nombre + apellido calculado' },
+  { name: 'direccion', type: 'string', readOnly: true, description: 'Direccion completa calculada' },
+
+  // Columnas de auditoria (las llena la base de datos automaticamente)
+  { name: 'usralt', type: 'string', readOnly: true, description: 'Usuario que creo el registro' },
+  { name: 'usrchg', type: 'string', readOnly: true, description: 'Usuario que modifico el registro' },
+  { name: 'fecalt', type: 'date', readOnly: true, description: 'Fecha de creacion' },
+  { name: 'fecchg', type: 'date', readOnly: true, description: 'Fecha de modificacion' },
+  { name: 'hosalt', type: 'string', readOnly: true, description: 'Host/IP de creacion' },
+  { name: 'hoschg', type: 'string', readOnly: true, description: 'Host/IP de modificacion' },
+];
