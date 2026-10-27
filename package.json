@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "build:win": "pkg server.js --targets node22-win-x64 --output dist/nigisuapi.exe",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -20,6 +21,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@yao-pkg/pkg": "^6.24.0",
     "nodemon": "^3.1.14"
   }
 }
