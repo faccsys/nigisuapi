@@ -25,7 +25,9 @@ function isPlainDate(value) {
 function validatePayload(data, columns, { isUpdate = false } = {}) {
   const errors = [];
   const value = {};
-  const writable = columns.filter((c) => !c.readOnly && !(isUpdate && c.pk));
+  const writable = columns.filter(
+    (c) => !c.readOnly && !(isUpdate && c.pk) && !(!isUpdate && c.autoIncrement)
+  );
   const writableByName = new Map(writable.map((c) => [c.name, c]));
 
   Object.keys(data || {}).forEach((key) => {

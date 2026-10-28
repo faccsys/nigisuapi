@@ -29,6 +29,7 @@ function toSwaggerSchema(columns, { mode = 'read' } = {}) {
   columns.forEach((col) => {
     if (mode !== 'read' && col.readOnly) return;
     if (mode === 'update' && col.pk) return;
+    if (mode === 'create' && col.autoIncrement) return;
 
     const schema = mapType(col);
     if (col.description) schema.description = col.description;

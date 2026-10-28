@@ -23,6 +23,19 @@ async function query(sql, params) {
   return params && params.length ? pool.query(sql, params) : pool.query(sql);
 }
 
+// Runs fn against a single reserved connection (not round-tripped through the
+// pool between statements), needed when two statements must share session
+// state - e.g. INSERT followed by SELECT @@IDENTITY for an autoincrement PK.
+async function withConnection(fn) {
+  const pool = await getPool();
+  const connection = await pool.connect();
+  try {
+    return await fn(connection);
+  } finally {
+    await connection.close();
+  }
+}
+
 async function closePool() {
   if (poolPromise) {
     const pool = await poolPromise;
@@ -31,4 +44,4 @@ async function closePool() {
   }
 }
 
-module.exports = { getPool, query, closePool };
+module.exports = { getPool, query, withConnection, closePool };

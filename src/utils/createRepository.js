@@ -87,6 +87,26 @@ function createRepository({ table, columns, searchColumns = [] }) {
   }
 
   async function create(data) {
+    // Autoincrement PK: the DB assigns it, so it's stripped from the INSERT
+    // (even if sent) and recovered via @@IDENTITY on the same connection.
+    if (pk.autoIncrement) {
+      const payload = { ...data };
+      delete payload[pk.name];
+      const columnsToInsert = Object.keys(payload);
+      if (columnsToInsert.length === 0) throw new Error('create: no hay columnas para insertar');
+      const placeholders = columnsToInsert.map(() => '?').join(', ');
+      const sql = `INSERT INTO ${table} (${columnsToInsert.join(', ')}) VALUES (${placeholders})`;
+      const params = columnsToInsert.map((c) => payload[c]);
+
+      const newId = await db.withConnection(async (connection) => {
+        await connection.query(sql, params);
+        const idRows = await connection.query('SELECT @@IDENTITY AS id');
+        return idRows[0].id;
+      });
+
+      return findById(newId);
+    }
+
     const columnsToInsert = Object.keys(data);
     if (columnsToInsert.length === 0) throw new Error('create: no hay columnas para insertar');
     const placeholders = columnsToInsert.map(() => '?').join(', ');
