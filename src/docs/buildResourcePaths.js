@@ -112,4 +112,43 @@ function buildResourcePaths({ resourcePath, tag, componentPrefix, pkName, pkSche
   };
 }
 
-module.exports = { buildResourcePaths };
+/**
+ * Builds a single GET-list path for a read-only view/resource (no id lookup,
+ * no POST/PUT/DELETE since there is nothing to write to or a row key to use).
+ */
+function buildReadOnlyListPath({ resourcePath, tag, componentPrefix, singularLabel, filterParams = [] }) {
+  const listParams = [
+    { name: 'page', in: 'query', description: 'Numero de pagina (base 1)', schema: { type: 'integer', minimum: 1, default: 1 } },
+    { name: 'pageSize', in: 'query', description: 'Cantidad de registros por pagina (1-200)', schema: { type: 'integer', minimum: 1, maximum: 200, default: 25 } },
+    { name: 'q', in: 'query', description: 'Busqueda de texto libre', schema: { type: 'string' } },
+    ...filterParams,
+  ];
+
+  return {
+    [`/${resourcePath}`]: {
+      get: {
+        tags: [tag],
+        summary: `Listar ${singularLabel.toLowerCase()}`,
+        parameters: listParams,
+        responses: {
+          200: {
+            description: 'Listado paginado',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: { type: 'array', items: { $ref: `#/components/schemas/${componentPrefix}` } },
+                    meta: { $ref: '#/components/schemas/PaginationMeta' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+}
+
+module.exports = { buildResourcePaths, buildReadOnlyListPath };

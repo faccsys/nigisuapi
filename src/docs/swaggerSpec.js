@@ -2,8 +2,9 @@ const genperColumns = require('../models/genper.columns');
 const genpclColumns = require('../models/genpcl.columns');
 const genperadColumns = require('../models/genperad.columns');
 const genpclplanColumns = require('../models/genpclplan.columns');
+const planesTvnetResColumns = require('../models/planesTvnetRes.columns');
 const { toSwaggerSchema } = require('./schemaFromColumns');
-const { buildResourcePaths } = require('./buildResourcePaths');
+const { buildResourcePaths, buildReadOnlyListPath } = require('./buildResourcePaths');
 
 const genperPaths = buildResourcePaths({
   resourcePath: 'genper',
@@ -70,6 +71,17 @@ const genpclplanPaths = buildResourcePaths({
   ],
 });
 
+const planesTvnetResPaths = buildReadOnlyListPath({
+  resourcePath: 'planestvnetres',
+  tag: 'PlanesTvnetRes (Resumen de planes)',
+  componentPrefix: 'PlanesTvnetRes',
+  singularLabel: 'Resumen de planes por cliente/direccion',
+  filterParams: [
+    { name: 'percodigo', in: 'query', schema: { type: 'number' }, description: 'Filtrar por codigo de cliente' },
+    { name: 'addcodigo', in: 'query', schema: { type: 'number' }, description: 'Filtrar por codigo de direccion' },
+  ],
+});
+
 module.exports = {
   openapi: '3.0.3',
   info: {
@@ -79,7 +91,8 @@ module.exports = {
       'API REST sobre la base de datos de Nigisu (SQL Anywhere, DSN "sql tvnet"). ' +
       'Entidades expuestas: genper00 (Personas), genpcl00 (Clientes, extension 1 a 1 ' +
       'de una persona via percodigo), genperad (Direcciones/instalaciones de una ' +
-      'persona) y genpclplan (Planes contratados por un cliente).',
+      'persona), genpclplan (Planes contratados por un cliente) y la vista ' +
+      'v_Fc_PlanesTvnetRes (resumen de planes por cliente/direccion, solo lectura).',
   },
   servers: [{ url: '/api/v1', description: 'Servidor local' }],
   tags: [
@@ -87,12 +100,14 @@ module.exports = {
     { name: 'Genpcl (Clientes)' },
     { name: 'Genperad (Direcciones)' },
     { name: 'Genpclplan (Planes de cliente)' },
+    { name: 'PlanesTvnetRes (Resumen de planes)' },
   ],
   paths: {
     ...genperPaths,
     ...genpclPaths,
     ...genperadPaths,
     ...genpclplanPaths,
+    ...planesTvnetResPaths,
   },
   components: {
     schemas: {
@@ -108,6 +123,7 @@ module.exports = {
       Genpclplan: toSwaggerSchema(genpclplanColumns, { mode: 'read' }),
       GenpclplanInput: toSwaggerSchema(genpclplanColumns, { mode: 'create' }),
       GenpclplanUpdate: toSwaggerSchema(genpclplanColumns, { mode: 'update' }),
+      PlanesTvnetRes: toSwaggerSchema(planesTvnetResColumns, { mode: 'read' }),
       PaginationMeta: {
         type: 'object',
         properties: {
